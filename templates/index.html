@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>数字占卜</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      body {
+        background-color: #f2f2f2;
+      }
+      form {
+        margin-top: 50px;
+        text-align: center;
+      }
+      label {
+        font-size: 20px;
+      }
+      input {
+        margin-left: 10px;
+        font-size: 20px;
+      }
+      button {
+        font-size: 20px;
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      #result {
+        text-align:center;
+        margin-top: 50px;
+        font-size: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <form id="calculate-form">
+      <label for="a">下卦:</label>
+      <input type="number" id="a" name="a"><br><br>
+      <label for="b">上卦:</label>
+      <input type="number" id="b" name="b"><br><br>
+      <label for="c">变爻:</label>
+      <input type="number" id="c" name="c"><br><br>
+      <button type="submit">占卜</button>
+    </form>
+
+    <div id="result">
+    </div>
+
+    <script>
+      const form = document.querySelector('#calculate-form');
+      const resultDiv = document.querySelector('#result');
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const data = {
+          'a': form.a.value,
+          'b': form.b.value,
+          'c': form.c.value
+        };
+        fetch('/calculate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+          resultDiv.innerHTML = `
+            <div style="font-size: 20px; margin-top: 50px;">
+              <p>变爻: ${data.result_c}</p>
+              <p>上卦: ${data.result_b}</p>
+              <p>下卦: ${data.result_a}</p>
+            </div>
+          `;
+        });
+      });
+    </script>
+  </body>
+</html>
