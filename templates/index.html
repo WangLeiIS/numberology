@@ -68,13 +68,20 @@
         })
         .then(response => response.json())
         .then(data => {
-          resultDiv.innerHTML = `
-            <div style="font-size: 20px; margin-top: 50px;">
-              <p>变爻: ${data.result_c}</p>
+          let resultHTML = `
+          <div style="font-size: 20px; margin-top: 50px; display: flex; flex-direction: row;">
+            <div style="flex: 1;">
               <p>上卦: ${data.result_b}</p>
               <p>下卦: ${data.result_a}</p>
+              <p>变爻: ${data.result_c}</p>
             </div>
+            <div style="flex: 1;">
+              <p>卦序：${data.result_d}</p>
+              <p>卦名：${data.result_e}</p>
+            </div>
+          </div>
           `;
+          resultDiv.innerHTML = resultHTML;
         });
       });
     </script>
