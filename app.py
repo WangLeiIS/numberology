@@ -13,7 +13,7 @@ def calculate():
     a = data['a']
     b = data['b']
     c = data['c']
-    sit_mapping = {0: '坤', 1: '乾', 2: '兑', 3: '离', 4: '震', 5: '巽', 6: '坎', 7: '艮'}
+    sit_mapping = {0: '坤  ☷', 1: '乾  ☰', 2: '兑  ☱', 3: '离  ☲', 4: '震  ☳', 5: '巽  ☴', 6: '坎  ☵', 7: '艮  ☶'}
     phase_mapping = {0: '上', 1: '初', 2: '二', 3: '三', 4: '四', 5: '五'}
     result_a = sit_mapping[int(a) % 8]
     result_b = sit_mapping[int(b) % 8]
