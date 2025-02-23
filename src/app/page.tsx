@@ -160,16 +160,6 @@ export default function DivinationCalculator() {
     })
   }
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "易经数字占卜",
-    "description": "在线周易卦象查询工具",
-    "applicationCategory": "占卜工具",
-    "operatingSystem": "All",
-    "inLanguage": "zh-CN",
-  };
-
   return (
     <main className="container mx-auto px-4 py-8">
       <article>
