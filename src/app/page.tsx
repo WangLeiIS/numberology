@@ -172,8 +172,7 @@ export default function DivinationCalculator() {
         
         <Card className="mx-auto max-w-md">
           <CardHeader>
-            <CardTitle className="text-2xl text-center">数字占卜</CardTitle>
-            <CardDescription className="text-center">输入数字获取卦象</CardDescription>
+            <CardDescription className="text-left">输入数字获取卦象</CardDescription>
           </CardHeader>
           <CardContent>
             <Form {...form}>
@@ -263,9 +262,6 @@ export default function DivinationCalculator() {
                     <p>卦名：{result.hexagramName}</p>
                   </div>
                 </div>
-                <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                  <p className="whitespace-pre-line">{result.hexagramContent}</p>
-                </div>
               </div>
             )}
           </CardContent>
@@ -274,17 +270,6 @@ export default function DivinationCalculator() {
         {result && (
           <section className="mt-8" aria-label="占卜结果">
             <div className="mt-8 space-y-4">
-              <div className="grid grid-cols-2 gap-4 text-center">
-                <div className="space-y-2">
-                  <p>上卦: {result.upperTrigram}</p>
-                  <p>下卦: {result.lowerTrigram}</p>
-                  <p>变爻: {result.changingLine}</p>
-                </div>
-                <div className="space-y-2">
-                  <p>卦序：{result.hexagramNumber}</p>
-                  <p>卦名：{result.hexagramName}</p>
-                </div>
-              </div>
               <div className="mt-4 p-4 bg-gray-50 rounded-lg">
                 <p className="whitespace-pre-line">{result.hexagramContent}</p>
               </div>
