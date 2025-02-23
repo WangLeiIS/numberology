@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://numerology.read.yoga/sitemap.xml 

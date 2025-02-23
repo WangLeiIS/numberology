@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import type { DivinationResult, FormValues } from "./types"
+import yaml from "js-yaml"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -117,6 +118,16 @@ const PHASE_MAPPING: Record<number, string> = {
 
 export default function DivinationCalculator() {
   const [result, setResult] = useState<DivinationResult | null>(null)
+  const [hexagramContents, setHexagramContents] = useState<Record<number, string>>({})
+
+  useEffect(() => {
+    fetch('/data.yaml')
+      .then(res => res.text())
+      .then(text => {
+        const data = yaml.load(text) as Record<number, string>
+        setHexagramContents(data)
+      })
+  }, [])
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -137,6 +148,7 @@ export default function DivinationCalculator() {
     const resultC = PHASE_MAPPING[changingLine]
     const sit64 = TABLE_64[downSit][upSit]
     const sitName = DUOSIT_MAPPING[sit64]
+    const sitContent = hexagramContents[sit64] || '暂无内容'
 
     setResult({
       upperTrigram: resultB,
@@ -144,107 +156,153 @@ export default function DivinationCalculator() {
       changingLine: resultC,
       hexagramNumber: sit64,
       hexagramName: sitName,
+      hexagramContent: sitContent,
     })
   }
 
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <Card className="mx-auto max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl text-center">数字占卜</CardTitle>
-          <CardDescription className="text-center">输入数字获取卦象</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="lowerTrigram"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>下卦</FormLabel>
-                    <FormControl>
-                      <div className="flex gap-2">
-                        <Input type="number" placeholder="输入数字" {...field} />
-                        <Button 
-                          type="button" 
-                          variant="outline"
-                          onClick={() => field.onChange(Math.floor(Math.random() * 900 + 100).toString())}
-                        >
-                          随机
-                        </Button>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="upperTrigram"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>上卦</FormLabel>
-                    <FormControl>
-                      <div className="flex gap-2">
-                        <Input type="number" placeholder="输入数字" {...field} />
-                        <Button 
-                          type="button" 
-                          variant="outline"
-                          onClick={() => field.onChange(Math.floor(Math.random() * 900 + 100).toString())}
-                        >
-                          随机
-                        </Button>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="changingLine"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>变爻</FormLabel>
-                    <FormControl>
-                      <div className="flex gap-2">
-                        <Input type="number" placeholder="输入数字" {...field} />
-                        <Button 
-                          type="button" 
-                          variant="outline"
-                          onClick={() => field.onChange(Math.floor(Math.random() * 900 + 100).toString())}
-                        >
-                          随机
-                        </Button>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit" className="w-full">
-                占卜
-              </Button>
-            </form>
-          </Form>
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "易经数字占卜",
+    "description": "在线周易卦象查询工具",
+    "applicationCategory": "占卜工具",
+    "operatingSystem": "All",
+    "inLanguage": "zh-CN",
+  };
 
-          {result && (
-            <div className="mt-8 grid grid-cols-2 gap-4 text-center">
-              <div className="space-y-2">
-                <p>上卦: {result.upperTrigram}</p>
-                <p>下卦: {result.lowerTrigram}</p>
-                <p>变爻: {result.changingLine}</p>
+  return (
+    <main className="container mx-auto px-4 py-8">
+      <article>
+        <header>
+          <h1 className="text-3xl font-bold text-center mb-4">易经数字占卜</h1>
+          <p className="text-center text-gray-600 mb-8">
+            通过数字演算，探索古老易经的智慧
+          </p>
+        </header>
+        
+        <Card className="mx-auto max-w-md">
+          <CardHeader>
+            <CardTitle className="text-2xl text-center">数字占卜</CardTitle>
+            <CardDescription className="text-center">输入数字获取卦象</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="lowerTrigram"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>下卦</FormLabel>
+                      <FormControl>
+                        <div className="flex gap-2">
+                          <Input type="number" placeholder="输入数字" {...field} />
+                          <Button 
+                            type="button" 
+                            variant="outline"
+                            onClick={() => field.onChange(Math.floor(Math.random() * 900 + 100).toString())}
+                          >
+                            随机
+                          </Button>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="upperTrigram"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>上卦</FormLabel>
+                      <FormControl>
+                        <div className="flex gap-2">
+                          <Input type="number" placeholder="输入数字" {...field} />
+                          <Button 
+                            type="button" 
+                            variant="outline"
+                            onClick={() => field.onChange(Math.floor(Math.random() * 900 + 100).toString())}
+                          >
+                            随机
+                          </Button>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="changingLine"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>变爻</FormLabel>
+                      <FormControl>
+                        <div className="flex gap-2">
+                          <Input type="number" placeholder="输入数字" {...field} />
+                          <Button 
+                            type="button" 
+                            variant="outline"
+                            onClick={() => field.onChange(Math.floor(Math.random() * 900 + 100).toString())}
+                          >
+                            随机
+                          </Button>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" className="w-full">
+                  占卜
+                </Button>
+              </form>
+            </Form>
+
+            {result && (
+              <div className="mt-8 space-y-4">
+                <div className="grid grid-cols-2 gap-4 text-center">
+                  <div className="space-y-2">
+                    <p>上卦: {result.upperTrigram}</p>
+                    <p>下卦: {result.lowerTrigram}</p>
+                    <p>变爻: {result.changingLine}</p>
+                  </div>
+                  <div className="space-y-2">
+                    <p>卦序：{result.hexagramNumber}</p>
+                    <p>卦名：{result.hexagramName}</p>
+                  </div>
+                </div>
+                <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                  <p className="whitespace-pre-line">{result.hexagramContent}</p>
+                </div>
               </div>
-              <div className="space-y-2">
-                <p>卦序：{result.hexagramNumber}</p>
-                <p>卦名：{result.hexagramName}</p>
+            )}
+          </CardContent>
+        </Card>
+        
+        {result && (
+          <section className="mt-8" aria-label="占卜结果">
+            <div className="mt-8 space-y-4">
+              <div className="grid grid-cols-2 gap-4 text-center">
+                <div className="space-y-2">
+                  <p>上卦: {result.upperTrigram}</p>
+                  <p>下卦: {result.lowerTrigram}</p>
+                  <p>变爻: {result.changingLine}</p>
+                </div>
+                <div className="space-y-2">
+                  <p>卦序：{result.hexagramNumber}</p>
+                  <p>卦名：{result.hexagramName}</p>
+                </div>
+              </div>
+              <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                <p className="whitespace-pre-line">{result.hexagramContent}</p>
               </div>
             </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+          </section>
+        )}
+      </article>
+    </main>
   )
 }
 

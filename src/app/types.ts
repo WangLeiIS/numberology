@@ -1,12 +1,13 @@
-export interface DivinationResult {
+export type DivinationResult = {
   upperTrigram: string
   lowerTrigram: string
   changingLine: string
   hexagramNumber: number
   hexagramName: string
+  hexagramContent: string
 }
 
-export interface FormValues {
+export type FormValues = {
   lowerTrigram: string
   upperTrigram: string
   changingLine: string
